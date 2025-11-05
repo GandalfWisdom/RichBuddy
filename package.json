@@ -1,0 +1,29 @@
+{
+  "name": "@gandalfwisdom/richbuddy",
+  "version": "1.0.0",
+  "description": "A rich text system for Roblox",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GandalfWisdom/RichBuddy.git",
+    "directory": "src/richbuddy/"
+  },
+  "keywords": [
+    "Roblox",
+    "Nevermore",
+    "Lua"
+  ],
+  "author": "GandalfWisdom",
+  "license": "MIT",
+  "dependencies": {
+    "@quenty/loader": "^10.9.0",
+    "@quenty/maid": "^3.5.0",
+    "@gandalfwisdom/stackbuddy": "^1.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/GandalfWisdom/RichBuddy/issues"
+  },
+  "homepage": "https://github.com/GandalfWisdom/RichBuddy#readme"
+}
