@@ -15,7 +15,7 @@ Convert any [TextLabel](https://create.roblox.com/docs/reference/engine/classes/
 ## Usage
 Initialize your RichBuddy object:
 ```lua
-local RichBuddy = require(path.to.stackbuddy);
+local RichBuddy = require(path.to.richbuddy);
 local rich_display = RichBuddy.new(text_label, `<write speed="0.05" style="drop"><b>Example text!</b></write>`);
 ```
 
