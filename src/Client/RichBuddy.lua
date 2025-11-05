@@ -5,9 +5,9 @@ local Maid = require("Maid");
 local RichFormat = require(script.Parent.RichFormat);
 local StackBuddy = require("StackBuddy");
 
-local RichDisplay = {};
-RichDisplay.__index = RichDisplay;
-RichDisplay.ClassName = "RichDisplay";
+local RichBuddy = {};
+RichBuddy.__index = RichBuddy;
+RichBuddy.ClassName = "RichBuddy";
 
 --Variables
 local MAGIC_CHARACTERS: {string} = {"$", "%", "^", "*", "(", ")", ".", "[", "]", "+", "-", "?"};
@@ -18,7 +18,7 @@ export type Config = {
     WriteStyle: string,
 };
 --[=[
-    Creates a new config table for RichDisplay
+    Creates a new config table for RichBuddy
     @param config_table {[string]: any} -- A table of values to apply to config table.
     @return Config -- Configuration table for rich display.
 ]=]
@@ -36,7 +36,7 @@ local function new_config(config_table: {[string]: any}?): Config
     return config :: Config;
 end;
 
-export type RichDisplay = typeof(setmetatable(
+export type RichBuddy = typeof(setmetatable(
     {} :: {
         _maid: Maid.Maid,
         _rich_text: RichFormat.RichFormat,
@@ -50,20 +50,20 @@ export type RichDisplay = typeof(setmetatable(
         _letterwise_count: number,
         _current_line_frame: Frame,
     },
-    {} :: typeof({ __index = RichDisplay })
+    {} :: typeof({ __index = RichBuddy })
 ));
 
 --[=[
-    Constructs a new RichDisplay object.
+    Constructs a new RichBuddy object.
     @param origin_label TextLabel -- The TextLabel the text will be inserted into as well as properties taken from.
-    @param text string -- Text to be applies to RichDisplay
+    @param text string -- Text to be applies to RichBuddy
     @param config {[string]: any}? -- A table of configuration properties.
-    @param text_properties {[string]: any}? -- A table of TextLabel properties to give to RichDisplay.
-    @return RichDisplay
+    @param text_properties {[string]: any}? -- A table of TextLabel properties to give to RichBuddy.
+    @return RichBuddy
 ]=]
-function RichDisplay.new(origin_label: TextLabel, text: string, config: {[string]: any}?, text_properties: {[string]: any}?): RichDisplay
+function RichBuddy.new(origin_label: TextLabel, text: string, config: {[string]: any}?, text_properties: {[string]: any}?): RichBuddy
     assert(origin_label, "Invalid text_container object!");
-    local self: RichDisplay = setmetatable({} :: any, RichDisplay);
+    local self: RichBuddy = setmetatable({} :: any, RichBuddy);
     self._maid = Maid.new();
     self._rich_text = self._maid:Add(RichFormat.new(text));
     self._token_stack = self._maid:Add(StackBuddy.new());
@@ -83,7 +83,7 @@ end;
 --[=[
     Populates container with richtext
 ]=]
-function RichDisplay.Populate(self: RichDisplay): ()
+function RichBuddy.Populate(self: RichBuddy): ()
     for token_index, token: RichFormat.RichToken | string in (self._rich_text:GetTokens()) do
         if (typeof(token) == "string") then -- Writes text
             self:_write_text(token);
@@ -108,7 +108,7 @@ end;
     Writes the text inside container.
     @param text string -- The text to be written.
 ]=]
-function RichDisplay._write_text(self: RichDisplay, text: string): ()
+function RichBuddy._write_text(self: RichBuddy, text: string): ()
     local font: Enum.Font = self._text_properties.Font;
     local text_size: number = self._text_properties.TextSize;
     for _, token: RichFormat.RichToken in (self._token_stack :: any) do -- Checks for custom font sizes and updates variable. Important for fit checking functions.
@@ -147,7 +147,7 @@ end;
     Checks if text is letterwise and fills in text accordingly.
     @param text string -- Text to fill in.
 ]=]
-function RichDisplay._letterwise_check(self: RichDisplay, text: string): ()
+function RichBuddy._letterwise_check(self: RichBuddy, text: string): ()
     if (self._letterwise_count == 0) then -- Text is not letterwise, fill entire frame.
         self:_create_label(text);
     else -- Text is letterwise, fill each frame letter by letter.
@@ -161,7 +161,7 @@ end;
     Applies all current tags to label.
     @param text_label TextLabel -- TextLabel to apply tags to.
 ]=]
-function RichDisplay._apply_tags(self: RichDisplay, text_label: TextLabel): ()
+function RichBuddy._apply_tags(self: RichBuddy, text_label: TextLabel): ()
     --[=[
         Pools attributes together to avoid applying multiple tags more than once.
         For example: "<font size=\"35\"><font color=\"00FF00\">Hello world!</font></font>
@@ -185,10 +185,10 @@ function RichDisplay._apply_tags(self: RichDisplay, text_label: TextLabel): ()
 end;
 
 --[=[
-    Applies text properties if provided upon creation of RichDisplay class.
+    Applies text properties if provided upon creation of RichBuddy class.
     @param text_label TextLabel -- Label to apply properties to.
 ]=]
-function RichDisplay._apply_properties(self: RichDisplay, text_label: TextLabel): ()
+function RichBuddy._apply_properties(self: RichBuddy, text_label: TextLabel): ()
     assert(text_label, "Invalid or no TextLabel present in the function params!");
     if not (next(self._text_properties)) then return; end; -- Guard clause in case properties are empty.
     for property_name: string, property_value: any in (self._text_properties) do
@@ -199,7 +199,7 @@ end;
 --[=[
     Warns if text property isn't set correctly in properties table and removes invalid values.
 ]=]
-function RichDisplay._validate_text_properties(self: RichDisplay): ()
+function RichBuddy._validate_text_properties(self: RichBuddy): ()
     if not (next(self._text_properties)) then return; end;
     local valid_label: TextLabel = Instance.new("TextLabel");
     for property_name: string, property_value: any in (self._text_properties) do
@@ -218,7 +218,7 @@ end;
     @param letter_index number -- The index of the letter in the text body.
     @return label TextLabel -- The letter as a TextLabel object.
 ]=]
-function RichDisplay._create_label(self: RichDisplay, text: string): TextLabel
+function RichBuddy._create_label(self: RichBuddy, text: string): TextLabel
     local label_frame: Frame = Instance.new("Frame"); -- Frame the letter gets contained in.
     label_frame.BackgroundTransparency = 1;
     --label_frame.AutomaticSize = Enum.AutomaticSize.XY;
@@ -251,9 +251,9 @@ end;
     @param fill_direction Enum.FillDirection -- The fill direction the list layout will use.
     @return list_layout UIListLayout -- UIListLayout object to sort letter labels.
 ]=]
-function RichDisplay._create_list_layout(self: RichDisplay, fill_direction: Enum.FillDirection): UIListLayout
+function RichBuddy._create_list_layout(self: RichBuddy, fill_direction: Enum.FillDirection): UIListLayout
     local list_layout: UIListLayout = Instance.new("UIListLayout");
-    list_layout.Name = "RichDisplayLayout";
+    list_layout.Name = "RichBuddyLayout";
     list_layout.FillDirection = fill_direction;
 
     if (fill_direction == Enum.FillDirection.Vertical) then -- Line frame layout
@@ -271,7 +271,7 @@ end;
     Creates a new line frame and sets it to the _current_line_frame variables.
     @param is_new_line boolean -- Whether to treate this as a new line/line break.
 ]=]
-function RichDisplay._create_line_frame(self: RichDisplay, is_new_line: boolean): ()
+function RichBuddy._create_line_frame(self: RichBuddy, is_new_line: boolean): ()
     local line_frame: Frame = Instance.new("Frame");
     line_frame.Name = "TextLine";
     line_frame.BackgroundTransparency = 1;
@@ -296,7 +296,7 @@ end;
     Creates the container in which text will be stored in. A folder that rests within the TextLabel parent.
     @return Folder -- The container for the line frames and letters.
 ]=]
-function RichDisplay._create_text_container(self: RichDisplay): Folder
+function RichBuddy._create_text_container(self: RichBuddy): Folder
     local text_container: Folder = Instance.new("Folder");
     text_container.Name = "RichTextContainer";
     text_container.Parent = self._origin_label;
@@ -310,7 +310,7 @@ end;
     @param text_size number -- The size of the text.
     @return fitted_text string -- The text cut down to fit text line.
 ]=]
-function RichDisplay._fit_words(self: RichDisplay, text: string, font: Enum.Font, text_size: number): string?
+function RichBuddy._fit_words(self: RichBuddy, text: string, font: Enum.Font, text_size: number): string?
     local remaining_width: number = self:_get_remaining_width(self._current_line_frame);
     local words_table: {string} = {};
 
@@ -340,7 +340,7 @@ end;
     @param text_size number -- The size of the text.
     @return fitted_text string -- The text cut down to fit text line.
 ]=]
-function RichDisplay._fit_letters(self: RichDisplay, text: string, font: Enum.Font, text_size: number): string?
+function RichBuddy._fit_letters(self: RichBuddy, text: string, font: Enum.Font, text_size: number): string?
     local remaining_width: number = self:_get_remaining_width(self._current_line_frame);
     for count = 1, string.len(text) do
         local text_bounds: Vector2 = TextService:GetTextSize(string.sub(text, 1, count), self._text_properties.TextSize, self._text_properties.Font, (Vector2.one * math.huge));
@@ -354,7 +354,7 @@ end;
     @param text string -- The text to be 'sanitized'
     @param sanitized_text string -- The text that has been 'sanitized'
 ]=]
-function RichDisplay._sanitize_text(self: RichDisplay, text: string): string
+function RichBuddy._sanitize_text(self: RichBuddy, text: string): string
     local sanitized_text: string = "";
     for _, letter in string.split(text, "") do
         if (table.find(MAGIC_CHARACTERS, letter)) then
@@ -370,7 +370,7 @@ end;
     @param line_frame Frame -- The line frame that will contain the letters/words.
     @return number -- The remaining width on the X axis of the line frame.
 ]=]
-function RichDisplay._get_remaining_width(self: RichDisplay, line_frame: Frame): number
+function RichBuddy._get_remaining_width(self: RichBuddy, line_frame: Frame): number
     local size_sum: number = 0;
     for _, frame in (line_frame:GetChildren()) do
         if not (frame:IsA("Frame")) then continue; end;
@@ -384,7 +384,7 @@ end;
     @param text_label TextLabel -- The text label to grab properties from.
     @return table {[string]: any} -- The table full of TextLabel properties.
 ]=]
-function RichDisplay._get_properties_from_label(self: RichDisplay, text_label: TextLabel): {[string]: any}
+function RichBuddy._get_properties_from_label(self: RichBuddy, text_label: TextLabel): {[string]: any}
     return {
         TextSize = text_label.TextSize;
         Font = text_label.Font;
@@ -400,19 +400,19 @@ function RichDisplay._get_properties_from_label(self: RichDisplay, text_label: T
 end;
 
 --[=[
-    Initializes the RichDisplay object.
+    Initializes the RichBuddy object.
 ]=]
-function RichDisplay.Init(self: RichDisplay): ()
+function RichBuddy.Init(self: RichBuddy): ()
     self:_validate_text_properties(); -- Ensures text properties are valid.
     self._list_layout.Parent = self._text_container;
 end;
 
 --[=[
-    Cleans up the RichDisplay object and sets it's metatable to nil.
+    Cleans up the RichBuddy object and sets it's metatable to nil.
 ]=]
-function RichDisplay.Destroy(self: RichDisplay): ()
+function RichBuddy.Destroy(self: RichBuddy): ()
     self._maid:DoCleaning();
     setmetatable(self :: any, nil);
 end;
 
-return RichDisplay;
+return RichBuddy;
